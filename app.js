@@ -185,6 +185,5 @@ function int8ToBin(int8) {
 }
 
 function bin8ToInt(bin8) {
-  console.log('bin8: ' + bin8);
   return parseInt(bin8, 2);
 }
