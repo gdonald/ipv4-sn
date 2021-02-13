@@ -6,20 +6,6 @@
   <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
-<!--<div>-->
-<!--  <form>-->
-<!--    <p>-->
-<!--      <label>IP Address:-->
-<!--        <input type="text" id="address" value="12.23.34.45" />-->
-<!--      </label>-->
-<!--    </p>-->
-<!--    <p>-->
-<!--      <label>Subnet Mask:-->
-<!--        <input type="text" id="mask" value="255.255.255.0" />-->
-<!--      </label>-->
-<!--    </p>-->
-<!--  </form>-->
-<!--</div>-->
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <a class="navbar-brand" href="#">Subnet Calculator</a>
@@ -29,18 +15,41 @@
 </nav>
 
 <div class="container-fluid main">
-  <form>
-    <div class="form-group">
-      <label for="address">IP Address</label>
-      <input type="text" class="form-control" id="address" aria-describedby="addressHelp" placeholder="12.34.56.78" value="12.34.56.78" />
-      <small id="addressHelp" class="form-text text-muted"></small>
-    </div>
-    <div class="form-group">
-      <label for="mask">Subnet Mask</label>
-      <input type="text" class="form-control" id="mask" aria-describedby="maskHelp" placeholder="255.255.255.0" value="255.255.255.0" />
-      <small id="maskHelp" class="form-text text-muted"></small>
-    </div>
-  </form>
+  <div class="container-fluid">
+    <form>
+      <div class="row">
+        <div class="form-group col-6">
+          <label for="addr">IP Address</label>
+          <input type="text" class="form-control" id="addr" aria-describedby="addrHelp" value="10.0.0.0" />
+          <p class="text-danger" id="addrError" style="display:none">invalid</p>
+        </div>
+
+        <div class="form-group col-6">
+          <label for="addrBin">&nbsp;</label>
+          <input type="text" class="form-control" id="addrBin" aria-describedby="addrBinHelp" value="" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-4">
+          <label for="mask">Subnet Mask</label>
+          <input type="text" class="form-control" id="mask" aria-describedby="maskHelp" value="255.255.255.0" />
+          <p class="text-danger" id="maskError" style="display:none">invalid</p>
+        </div>
+
+        <div class="form-group col-2">
+          <label for="cidr">CIDR</label>
+          <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="/24" />
+          <p class="text-danger" id="cidrError" style="display:none">invalid</p>
+        </div>
+
+        <div class="form-group col-6">
+          <label for="maskBin">&nbsp;</label>
+          <input type="text" class="form-control" id="maskBin" aria-describedby="maskHelp" value="" />
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

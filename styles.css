@@ -1,3 +1,11 @@
 .main {
     margin-top: 72px;
 }
+
+input {
+    font-family: Monaco, Consolas, monospace;
+}
+
+p.text-danger {
+    padding: 4px 0 0 4px;
+}
