@@ -78,7 +78,7 @@ function updateCidrVal(val) {
   cidrVal = cidrVal + val;
 
   if(cidrVal > 32) { cidrVal = 32; }
-  if(cidrVal < 1) { cidrVal = 1; }
+  if(cidrVal < 0) { cidrVal = 0; }
 
   $cidr.val(cidrVal);
   $cidr.keyup();
@@ -133,7 +133,7 @@ function cleanCidr(e) {
 
   cidrValid = true;
   newCidr = parseInt(newCidr, 10);
-  if (isNaN(newCidr) || newCidr > 32 || newCidr < 1) {
+  if (isNaN(newCidr) || newCidr > 32 || newCidr < 0) {
     cidrValid = false;
   }
 }
