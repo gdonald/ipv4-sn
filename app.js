@@ -3,6 +3,8 @@ let $addr;
 let $mask;
 let $wild;
 let $cidr;
+let $cidrAdd;
+let $cidrSub;
 let $addrBin;
 let $maskBin;
 let $wildBin;
@@ -20,8 +22,10 @@ let wildValid = true;
 $(function() {
   $addr = $('#addr');
   $mask = $('#mask');
-  $cidr = $('#cidr');
   $wild = $('#wild');
+  $cidr = $('#cidr');
+  $cidrAdd = $('#cidrAdd');
+  $cidrSub = $('#cidrSub');
   $addrBin = $('#addrBin');
   $maskBin = $('#maskBin');
   $wildBin = $('#wildBin');
@@ -57,9 +61,28 @@ $(function() {
     showHideErrors();
   });
 
+  $cidrAdd.mouseup(function(e) {
+    updateCidrVal(1);
+  });
+
+  $cidrSub.mouseup(function(e) {
+    updateCidrVal(-1);
+  });
+
   updateBinVals();
   showHideErrors();
 });
+
+function updateCidrVal(val) {
+  let cidrVal = parseInt($cidr.val(), 10);
+  cidrVal = cidrVal + val;
+
+  if(cidrVal > 32) { cidrVal = 32; }
+  if(cidrVal < 1) { cidrVal = 1; }
+
+  $cidr.val(cidrVal);
+  $cidr.keyup();
+}
 
 function updateMaskFromWild() {
   let octs = $wild.val().split('.');
@@ -82,7 +105,7 @@ function updateWildFromMask() {
 }
 
 function updateMaskFromCidr() {
-  const val = parseInt($cidr.val().substr(1), 10);
+  const val = parseInt($cidr.val(), 10);
 
   let maskBin = '';
   maskBin = maskBin.padEnd(val, '1');
@@ -103,20 +126,14 @@ function updateMaskFromCidr() {
 }
 
 function cleanCidr(e) {
-  const regex = /[^\d\/]/g;
+  const regex = /[^\d]/g;
   let newCidr = e.target.value.replace(regex, '');
 
   $(e.target).val(newCidr);
 
   cidrValid = true;
-  if (newCidr[0] !== '/') {
-    cidrValid = false;
-    return;
-  }
-
-  var val = newCidr.substr(1);
-  val = parseInt(val, 10);
-  if (isNaN(val) || val > 32 || val < 1) {
+  newCidr = parseInt(newCidr, 10);
+  if (isNaN(newCidr) || newCidr > 32 || newCidr < 1) {
     cidrValid = false;
   }
 }
@@ -197,7 +214,7 @@ function validateWild() {
 function updateBinVals() {
   const names = ['addr', 'mask', 'wild'];
   let octs = [];
-  const cidrVal = parseInt($cidr.val().substr(1), 10);
+  const cidrVal = parseInt($cidr.val(), 10);
 
   for (let i = 0; i < names.length; i++) {
     eval('octs = $' + names[i] + '.val().split(".");');
@@ -249,7 +266,7 @@ function updateCIDR() {
     count++;
   }
 
-  $cidr.val('/' + count);
+  $cidr.val(count);
 }
 
 function showHideErrors() {

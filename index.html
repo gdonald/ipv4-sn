@@ -41,7 +41,17 @@
 
         <div class="form-group col-2">
           <label for="cidr">CIDR</label>
-          <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="/8" />
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">/</span>
+            </div>
+            <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="8" />
+            <div class="input-group-append">
+              <button id="cidrSub" class="btn btn-danger" type="button">-</button>
+              <button id="cidrAdd" class="btn btn-primary" type="button">+</button>
+            </div>
+          </div>
+
           <p class="text-danger" id="cidrError" style="display:none">invalid</p>
         </div>
 
