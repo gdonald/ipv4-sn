@@ -35,19 +35,36 @@
       <div class="row">
         <div class="form-group col-4">
           <label for="mask">Subnet Mask</label>
-          <input type="text" class="form-control" id="mask" aria-describedby="maskHelp" value="255.255.255.0" />
+          <input type="text" class="form-control" id="mask" aria-describedby="maskHelp" value="255.0.0.0" />
           <p class="text-danger" id="maskError" style="display:none">invalid</p>
         </div>
 
         <div class="form-group col-2">
           <label for="cidr">CIDR</label>
-          <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="/24" />
+          <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="/8" />
           <p class="text-danger" id="cidrError" style="display:none">invalid</p>
         </div>
 
         <div class="form-group col-6">
           <label for="maskBin">&nbsp;</label>
           <input type="text" class="form-control" id="maskBin" aria-describedby="maskHelp" value="" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-4">
+          <label for="wild">Wildcard Mask</label>
+          <input type="text" class="form-control" id="wild" aria-describedby="wildHelp" value="0.255.255.255" />
+          <p class="text-danger" id="wildError" style="display:none">invalid</p>
+        </div>
+
+        <div class="form-group col-2">
+          &nbsp;
+        </div>
+
+        <div class="form-group col-6">
+          <label for="wildBin">&nbsp;</label>
+          <input type="text" class="form-control" id="wildBin" aria-describedby="wildHelp" value="" />
         </div>
       </div>
     </form>

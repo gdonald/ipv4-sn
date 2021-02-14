@@ -1,28 +1,35 @@
 
 let $addr;
 let $mask;
+let $wild;
 let $cidr;
 let $addrBin;
 let $maskBin;
+let $wildBin;
 
 let $addrError;
 let $maskError;
 let $cidrError;
+let $wildError;
 
 let addrValid = true;
 let maskValid = true;
 let cidrValid = true;
+let wildValid = true;
 
 $(function() {
   $addr = $('#addr');
   $mask = $('#mask');
   $cidr = $('#cidr');
+  $wild = $('#wild');
   $addrBin = $('#addrBin');
   $maskBin = $('#maskBin');
+  $wildBin = $('#wildBin');
 
   $addrError = $('#addrError');
   $maskError = $('#maskError');
   $cidrError = $('#cidrError');
+  $wildError = $('#wildError');
 
   $addr.keyup(function(e) {
     cleanAddr(e);
@@ -33,19 +40,46 @@ $(function() {
   $mask.keyup(function(e) {
     cleanAddr(e);
     if (maskValid) { validateMask(); }
-    if (maskValid) { updateBinVals(); updateCIDR(); }
+    if (maskValid) { updateCIDR(); updateWildFromMask(); updateBinVals(); }
     showHideErrors();
   });
 
   $cidr.keyup(function(e) {
     cleanCidr(e);
-    if (cidrValid) { updateMaskFromCidr(); updateBinVals(); }
+    if (cidrValid) { updateMaskFromCidr(); updateWildFromMask(); updateBinVals(); }
+    showHideErrors();
+  });
+
+  $wild.keyup(function(e) {
+    cleanAddr(e);
+    if (wildValid) { validateWild(); }
+    if (wildValid) { updateMaskFromWild(); updateCIDR(); updateBinVals(); }
     showHideErrors();
   });
 
   updateBinVals();
   showHideErrors();
 });
+
+function updateMaskFromWild() {
+  let octs = $wild.val().split('.');
+
+  for (let i = 0; i < octs.length; i++) {
+    octs[i] = 255 - octs[i];
+  }
+
+  $mask.val(octs.join('.'));
+}
+
+function updateWildFromMask() {
+  let octs = $mask.val().split('.');
+
+  for (let i = 0; i < octs.length; i++) {
+    octs[i] = 255 - octs[i];
+  }
+
+  $wild.val(octs.join('.'));
+}
 
 function updateMaskFromCidr() {
   const val = parseInt($cidr.val().substr(1), 10);
@@ -137,8 +171,31 @@ function validateMask() {
   }
 }
 
+function validateWild() {
+  wildValid = true;
+  let octs = $wild.val().split('.');
+
+  for (let i = 0; i < octs.length; i++) {
+    octs[i] = int8ToBin(octs[i]);
+  }
+
+  const str = octs.join('');
+
+  let foundOne = false;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === '1') {
+      foundOne = true;
+    }
+
+    if(foundOne && str[i] === '0') {
+      wildValid = false;
+      return;
+    }
+  }
+}
+
 function updateBinVals() {
-  const names = ['addr', 'mask'];
+  const names = ['addr', 'mask', 'wild'];
   let octs = [];
 
   for (let i = 0; i < names.length; i++) {
@@ -178,6 +235,7 @@ function showHideErrors() {
   addrValid ? $addrError.hide() : $addrError.show();
   maskValid ? $maskError.hide() : $maskError.show();
   cidrValid ? $cidrError.hide() : $cidrError.show();
+  wildValid ? $wildError.hide() : $wildError.show();
 }
 
 function int8ToBin(int8) {
