@@ -8,7 +8,7 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <a class="navbar-brand" href="#">Subnet Calculator</a>
+  <a class="navbar-brand" href="javascript:">Subnet Calculator</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -28,7 +28,7 @@
 
         <div class="form-group col-6">
           <label for="addrBin">&nbsp;</label>
-          <input type="text" class="form-control" id="addrBin" aria-describedby="addrBinHelp" value="" />
+          <p id="addrBin" aria-describedby="addrBinHelp" class="ip-read-only"></p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
 
         <div class="form-group col-6">
           <label for="maskBin">&nbsp;</label>
-          <input type="text" class="form-control" id="maskBin" aria-describedby="maskHelp" value="" />
+          <p id="maskBin" aria-describedby="maskHelp" class="ip-read-only"></p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@
 
         <div class="form-group col-6">
           <label for="wildBin">&nbsp;</label>
-          <input type="text" class="form-control" id="wildBin" aria-describedby="wildHelp" value="" />
+          <p id="wildBin" aria-describedby="wildHelp" class="ip-read-only"></p>
         </div>
       </div>
     </form>

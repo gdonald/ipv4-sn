@@ -1,3 +1,7 @@
+body {
+    font-family: Monaco, Consolas, monospace;
+}
+
 .main {
     margin-top: 72px;
 }
@@ -10,15 +14,22 @@ p.text-danger {
     padding: 4px 0 0 4px;
 }
 
+p.ip-read-only {
+    font-family: Monaco, Consolas, monospace;
+    font-size: 1.1rem;
+    margin-top: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
 #forkongithub a {
     background: #f00;
     color: #eee;
     text-decoration: none;
-    font-family: arial, sans-serif;
+    /*font-family: arial, sans-serif;*/
     text-align: center;
     font-weight: bold;
     padding: 5px 40px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     line-height: 2rem;
     position: relative;
     transition: 0.5s;

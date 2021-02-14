@@ -202,11 +202,10 @@ function updateBinVals() {
     eval('octs = $' + names[i] + '.val().split(".");');
 
     for (let i = 0; i < octs.length; i++) {
-      const bin = int8ToBin(octs[i]);
-      octs[i] = bin.substr(0, 4) + ' ' + bin.substr(4, 4);
+      octs[i] = int8ToBin(octs[i]);
     }
 
-    eval('$' + names[i] + 'Bin.val(octs.join("."));');
+    eval('$' + names[i] + 'Bin.html(octs.join("."));');
   }
 }
 
