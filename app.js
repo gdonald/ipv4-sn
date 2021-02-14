@@ -197,15 +197,37 @@ function validateWild() {
 function updateBinVals() {
   const names = ['addr', 'mask', 'wild'];
   let octs = [];
+  const cidrVal = parseInt($cidr.val().substr(1), 10);
 
   for (let i = 0; i < names.length; i++) {
     eval('octs = $' + names[i] + '.val().split(".");');
 
-    for (let i = 0; i < octs.length; i++) {
+    let charCount = 0;
+    for (let i = 0; i < 4; i++) {
       octs[i] = int8ToBin(octs[i]);
+
+      let newOct = '';
+
+      if (i === 0) {
+        newOct += '<span class="text-danger">';
+      }
+
+      for (let j = 0; j < octs[i].length; j++) {
+        if (cidrVal === charCount++) {
+          newOct += '</span><span class="text-primary">' + octs[i][j];
+        } else {
+          newOct += octs[i][j];
+        }
+      }
+
+      if (i === 31) {
+        newOct += '</span>';
+      }
+
+      octs[i] = newOct;
     }
 
-    eval('$' + names[i] + 'Bin.html(octs.join("."));');
+    eval('$' + names[i] + 'Bin.html(octs.join("<span class=\\"text-dark\\">.</span>"));');
   }
 }
 
