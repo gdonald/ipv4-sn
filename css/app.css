@@ -30,6 +30,10 @@ div.page-nav {
     margin-bottom: 10px;
 }
 
+span.text-info {
+    color: #6f42c1 !important;
+}
+
 #forkongithub a {
     background: #f00;
     color: #eee;

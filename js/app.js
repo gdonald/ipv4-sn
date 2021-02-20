@@ -1,13 +1,12 @@
 
 let $addr;
 let $mask;
-let $wild;
 let $cidr;
 let $cidrAdd;
 let $cidrSub;
 let $addrBin;
 let $maskBin;
-let $wildBin;
+let $subnetBin;
 let $subnets;
 let $subnetBits;
 let $hostBits;
@@ -21,27 +20,24 @@ let $pagePrev;
 let $pageNext;
 let $addrError;
 let $maskError;
-let $wildError;
 
 let addrValid = true;
 let maskValid = true;
-let wildValid = true;
 let currPage = 0;
 let totalPages = 0;
 let timeoutId = null;
 
-const SUBNETS_PER_PAGE = 8;
+const SUBNETS_PER_PAGE = 16;
 
 $(function() {
   $addr = $('#addr');
   $mask = $('#mask');
-  $wild = $('#wild');
   $cidr = $('#cidr');
   $cidrAdd = $('#cidrAdd');
   $cidrSub = $('#cidrSub');
   $addrBin = $('#addrBin');
   $maskBin = $('#maskBin');
-  $wildBin = $('#wildBin');
+  $subnetBin = $('#subnetBin');
   $subnets = $('#subnets');
   $subnetBits = $('#subnetBits');
   $hostBits = $('#hostBits');
@@ -55,7 +51,6 @@ $(function() {
   $pageNext = $('#pageNext');
   $addrError = $('#addrError');
   $maskError = $('#maskError');
-  $wildError = $('#wildError');
 
   $addr.keyup(function(e) {
     clearTimeout(timeoutId);
@@ -65,11 +60,6 @@ $(function() {
   $mask.keyup(function(e) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => handleMaskKeyUp(e), 500);
-  });
-
-  $wild.keyup(function(e) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => handleWildKeyUp(e), 500);
   });
 
   $cidrAdd.mouseup(function(e) {
@@ -121,14 +111,7 @@ function handleAddrKeyUp(e) {
 function handleMaskKeyUp(e) {
   cleanAddr(e);
   if (maskValid) { validateMask(); }
-  if (maskValid) { updateCIDR(); updateWildFromMask(); updateBinVals(); updateSubnets(); }
-  showHideErrors();
-}
-
-function handleWildKeyUp(e) {
-  cleanAddr(e);
-  if (wildValid) { validateWild(); }
-  if (wildValid) { updateMaskFromWild(); updateCIDR(); updateBinVals(); updateSubnets(); }
+  if (maskValid) { updateCIDR(); updateBinVals(); updateSubnets(); }
   showHideErrors();
 }
 
@@ -142,7 +125,6 @@ function updateCidrVal(val) {
   $cidr.val(cidrVal);
 
   updateMaskFromCidr();
-  updateWildFromMask();
   updateBinVals();
 
   updateSubnetBitsVal(0);
@@ -165,6 +147,7 @@ function updateSubnetBitsVal(val) {
   currPage = 0;
 
   updateSubnets();
+  updateBinVals();
 }
 
 function updateHostBitsVal(val) {
@@ -184,6 +167,7 @@ function updateHostBitsVal(val) {
   currPage = 0;
 
   updateSubnets();
+  updateBinVals();
 }
 
 function updateSubnets() {
@@ -192,7 +176,7 @@ function updateSubnets() {
   const subnetBitsVal = parseInt($subnetBits.val(), 10);
   if (subnetBitsVal < 2) {
     html += '<tr>';
-    html += '<td colspan="5" class="text-center">Not enough subnet bits</td>';
+    html += '<td colspan="7" class="text-center">Not enough subnet bits</td>';
     html += '</tr>';
 
     $subnets.html(html);
@@ -202,7 +186,7 @@ function updateSubnets() {
   const hostBitsVal = parseInt($hostBits.val(), 10);
   if (hostBitsVal < 2) {
     html += '<tr>';
-    html += '<td colspan="5" class="text-center">Not enough host bits</td>';
+    html += '<td colspan="7" class="text-center">Not enough host bits</td>';
     html += '</tr>';
 
     $subnets.html(html);
@@ -226,6 +210,9 @@ function updateSubnets() {
   const first = currPage * perPage;
   const last = first + perPage;
 
+  const subnetMask = ''.padEnd(cidrVal + subnetBitsVal, '1') + ''.padEnd(32 - cidrVal - subnetBitsVal, '0');
+  const wildMask = ''.padEnd(cidrVal + subnetBitsVal, '0') + ''.padEnd(32 - cidrVal - subnetBitsVal, '1');
+
   for (let i = first; i < last; i++) {
 
     let networkBits = cidrBits;
@@ -247,12 +234,14 @@ function updateSubnets() {
     broadcastBits += int8ToBin(i, false).padStart(cidrVal + subnetBitsVal - broadcastBits.length, '0');
     broadcastBits += ''.padEnd(32 - broadcastBits.length, '1');
 
-    html += '<tr>';
+    html += '<tr class="text-center">';
     html += '<th scope="row">' + (i + 1) + '</th>';
     html += '<td>' + bitsToIp(networkBits) + '</td>';
     html += '<td>' + bitsToIp(firstIpBits) + '</td>';
     html += '<td>' + bitsToIp(lastIpBits) + '</td>';
     html += '<td>' + bitsToIp(broadcastBits) + '</td>';
+    html += '<td>' + bitsToIp(subnetMask) + '</td>';
+    html += '<td>' + bitsToIp(wildMask) + '</td>';
     html += '</tr>';
   }
 
@@ -282,26 +271,6 @@ function ipToBits(ip) {
   }
 
   return octs.join('');
-}
-
-function updateMaskFromWild() {
-  let octs = $wild.val().split('.');
-
-  for (let i = 0; i < 4; i++) {
-    octs[i] = 255 - octs[i];
-  }
-
-  $mask.val(octs.join('.'));
-}
-
-function updateWildFromMask() {
-  let octs = $mask.val().split('.');
-
-  for (let i = 0; i < 4; i++) {
-    octs[i] = 255 - octs[i];
-  }
-
-  $wild.val(octs.join('.'));
 }
 
 function updateMaskFromCidr() {
@@ -373,41 +342,37 @@ function validateMask() {
   }
 }
 
-function validateWild() {
-  wildValid = true;
-  let octs = $wild.val().split('.');
-
-  for (let i = 0; i < 4; i++) {
-    octs[i] = int8ToBin(octs[i]);
-  }
-
-  const str = octs.join('');
-
-  let foundOne = false;
-  for (let i = 0; i < str.length; i++) {
-    if (str[i] === '1') {
-      foundOne = true;
-    }
-
-    if(foundOne && str[i] === '0') {
-      wildValid = false;
-      return;
-    }
-  }
-}
-
 function updateBinVals() {
-  const names = ['addr', 'mask', 'wild'];
+  const names = ['addr', 'mask', 'subnet'];
   let octs = [];
   const cidrVal = parseInt($cidr.val(), 10);
+  const subnetVal = parseInt($subnetBits.val(), 10);
 
-  for (let i = 0; i < names.length; i++) {
-    eval('octs = $' + names[i] + '.val().split(".");');
+  for (let n = 0; n < names.length; n++) {
+    eval('octs = $' + (names[n] === 'subnet' ? 'mask' : names[n]) + '.val().split(".");');
+
+    for (let i = 0; i < 4; i++) {
+      octs[i] = int8ToBin(octs[i]);
+    }
+
+    let tmp = octs.join('');
+    let pre = '';
+
+    if (names[n] === 'subnet') {
+      pre = tmp.substr(0, cidrVal) + ''.padEnd(subnetVal, '1') + tmp.substr(cidrVal + subnetVal, 32 - cidrVal - subnetVal);
+    } else {
+      pre = tmp;
+    }
+
+    octs = [
+      pre.substr(0, 8),
+      pre.substr(8, 8),
+      pre.substr(16, 8),
+      pre.substr(24, 8),
+    ];
 
     let charCount = 0;
     for (let i = 0; i < 4; i++) {
-      octs[i] = int8ToBin(octs[i]);
-
       let newOct = '';
 
       if (i === 0) {
@@ -415,11 +380,16 @@ function updateBinVals() {
       }
 
       for (let j = 0; j < octs[i].length; j++) {
-        if (cidrVal === charCount++) {
-          newOct += '</span><span class="text-primary">' + octs[i][j];
-        } else {
-          newOct += octs[i][j];
+        if (cidrVal === charCount && (names[n] === 'addr' || names[n] === 'mask')) {
+          newOct += '</span><span class="text-primary">';
+        } else if(cidrVal === charCount && names[n] === 'subnet') {
+          newOct += '</span><span class="text-info">';
+        } else if(cidrVal + subnetVal === charCount && names[n] === 'subnet') {
+          newOct += '</span><span class="text-primary">';
         }
+
+        newOct += octs[i][j];
+        charCount++;
       }
 
       if (i === 31) {
@@ -429,7 +399,7 @@ function updateBinVals() {
       octs[i] = newOct;
     }
 
-    eval('$' + names[i] + 'Bin.html(octs.join("<span class=\\"text-dark\\">.</span>"));');
+    eval('$' + names[n] + 'Bin.html(octs.join("<span class=\\"text-dark\\">.</span>"));');
   }
 }
 
@@ -457,7 +427,6 @@ function updateCIDR() {
 function showHideErrors() {
   addrValid ? $addrError.hide() : $addrError.show();
   maskValid ? $maskError.hide() : $maskError.show();
-  wildValid ? $wildError.hide() : $wildError.show();
 }
 
 function int8ToBin(int8, padding=true) {

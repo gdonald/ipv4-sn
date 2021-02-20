@@ -60,23 +60,6 @@
       </div>
 
       <div class="row">
-        <div class="form-group col-4">
-          <label for="wild">Wildcard Mask</label>
-          <input type="text" class="form-control" id="wild" aria-describedby="wildHelp" value="0.15.255.255" />
-          <p class="text-danger" id="wildError" style="display:none">invalid</p>
-        </div>
-
-        <div class="form-group col-2">
-          &nbsp;
-        </div>
-
-        <div class="form-group col-6">
-          <label for="wildBin">&nbsp;</label>
-          <p id="wildBin" aria-describedby="wildHelp" class="ip-read-only"></p>
-        </div>
-      </div>
-
-      <div class="row">
         <div class="form-group col-2">
           <label for="cidr">Subnet Bits</label>
           <div class="input-group">
@@ -98,6 +81,15 @@
             </div>
           </div>
         </div>
+
+        <div class="form-group col-2">
+          &nbsp;
+        </div>
+
+        <div class="form-group col-6">
+          <label for="subnetBin">&nbsp;</label>
+          <p id="subnetBin" aria-describedby="subnetBinHelp" class="ip-read-only"></p>
+        </div>
       </div>
 
     </form>
@@ -115,14 +107,16 @@
     </div>
 
     <div class="table-responsive-md">
-      <table class="table table-bordered table-striped">
+      <table class="table table-bordered table-striped table-sm">
         <thead>
-          <tr>
+          <tr class="text-center">
             <th scope="col">#</th>
             <th scope="col">Network</th>
             <th scope="col">First IP</th>
             <th scope="col">Last IP</th>
             <th scope="col">Broadcast</th>
+            <th scope="col">Subnet Mask</th>
+            <th scope="col">Wildcard Mask</th>
           </tr>
         </thead>
         <tbody id="subnets"></tbody>
