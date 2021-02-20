@@ -21,6 +21,15 @@ p.ip-read-only {
     margin-bottom: 0.6rem;
 }
 
+p.totals {
+    padding: 0;
+    margin: 8px 4px 0 0;
+}
+
+div.page-nav {
+    margin-bottom: 10px;
+}
+
 #forkongithub a {
     background: #f00;
     color: #eee;

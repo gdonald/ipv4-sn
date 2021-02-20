@@ -22,7 +22,7 @@
       <div class="row">
         <div class="form-group col-6">
           <label for="addr">IP Address</label>
-          <input type="text" class="form-control" id="addr" aria-describedby="addrHelp" value="10.0.0.0" />
+          <input type="text" class="form-control" id="addr" aria-describedby="addrHelp" value="172.16.0.0" />
           <p class="text-danger" id="addrError" style="display:none">invalid</p>
         </div>
 
@@ -35,7 +35,7 @@
       <div class="row">
         <div class="form-group col-4">
           <label for="mask">Subnet Mask</label>
-          <input type="text" class="form-control" id="mask" aria-describedby="maskHelp" value="255.0.0.0" />
+          <input type="text" class="form-control" id="mask" aria-describedby="maskHelp" value="255.240.0.0" />
           <p class="text-danger" id="maskError" style="display:none">invalid</p>
         </div>
 
@@ -45,7 +45,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text">/</span>
             </div>
-            <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="24" readonly="readonly" />
+            <input type="text" class="form-control" id="cidr" aria-describedby="cidrHelp" value="12" readonly="readonly" />
             <div class="input-group-append">
               <button id="cidrSub" class="btn btn-danger" type="button">－</button>
               <button id="cidrAdd" class="btn btn-primary" type="button">＋</button>
@@ -62,7 +62,7 @@
       <div class="row">
         <div class="form-group col-4">
           <label for="wild">Wildcard Mask</label>
-          <input type="text" class="form-control" id="wild" aria-describedby="wildHelp" value="0.255.255.255" />
+          <input type="text" class="form-control" id="wild" aria-describedby="wildHelp" value="0.15.255.255" />
           <p class="text-danger" id="wildError" style="display:none">invalid</p>
         </div>
 
@@ -80,7 +80,7 @@
         <div class="form-group col-2">
           <label for="cidr">Subnet Bits</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="subnetBits" aria-describedby="subnetBitsHelp" value="4" readonly="readonly" />
+            <input type="text" class="form-control" id="subnetBits" aria-describedby="subnetBitsHelp" value="12" readonly="readonly" />
             <div class="input-group-append">
               <button id="subnetBitsSub" class="btn btn-danger" type="button">－</button>
               <button id="subnetBitsAdd" class="btn btn-primary" type="button">＋</button>
@@ -91,7 +91,7 @@
         <div class="form-group col-2">
           <label for="cidr">Host Bits</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="hostBits" aria-describedby="hostBitsHelp" value="4" readonly="readonly" />
+            <input type="text" class="form-control" id="hostBits" aria-describedby="hostBitsHelp" value="8" readonly="readonly" />
             <div class="input-group-append">
               <button id="hostBitsSub" class="btn btn-danger" type="button">－</button>
               <button id="hostBitsAdd" class="btn btn-primary" type="button">＋</button>
@@ -104,7 +104,15 @@
   </div>
 
   <div class="container-fluid">
-    <p>Total Subnets: <span id="totalSubnets">0</span> &nbsp;Available IPs Per Subnet: <span id="totalHosts">0</span></p>
+    <div class="row">
+      <div class="col-6 page-nav">
+        <button id="pagePrev" class="btn btn-sm btn-primary" type="button">Prev</button>
+        <button id="pageNext" class="btn btn-sm btn-danger" type="button">Next</button>
+      </div>
+      <div class="col-6 text-right">
+        <p class="totals">Total Subnets: <span id="totalSubnets">0</span> &nbsp;Available IPs Per Subnet: <span id="totalHosts">0</span></p>
+      </div>
+    </div>
 
     <div class="table-responsive-md">
       <table class="table table-bordered table-striped">

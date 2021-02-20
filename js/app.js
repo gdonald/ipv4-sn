@@ -17,7 +17,8 @@ let $hostBitsAdd;
 let $hostBitsSub;
 let $totalSubnets;
 let $totalHosts;
-
+let $pagePrev;
+let $pageNext;
 let $addrError;
 let $maskError;
 let $wildError;
@@ -25,6 +26,11 @@ let $wildError;
 let addrValid = true;
 let maskValid = true;
 let wildValid = true;
+let currPage = 0;
+let totalPages = 0;
+let timeoutId = null;
+
+const SUBNETS_PER_PAGE = 8;
 
 $(function() {
   $addr = $('#addr');
@@ -45,29 +51,25 @@ $(function() {
   $subnetBitsSub = $('#subnetBitsSub');
   $totalSubnets = $('#totalSubnets');
   $totalHosts = $('#totalHosts');
-
+  $pagePrev = $('#pagePrev');
+  $pageNext = $('#pageNext');
   $addrError = $('#addrError');
   $maskError = $('#maskError');
   $wildError = $('#wildError');
 
   $addr.keyup(function(e) {
-    cleanAddr(e);
-    if (addrValid) { updateBinVals(); }
-    showHideErrors();
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => handleAddrKeyUp(e), 500);
   });
 
   $mask.keyup(function(e) {
-    cleanAddr(e);
-    if (maskValid) { validateMask(); }
-    if (maskValid) { updateCIDR(); updateWildFromMask(); updateBinVals(); }
-    showHideErrors();
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => handleMaskKeyUp(e), 500);
   });
 
   $wild.keyup(function(e) {
-    cleanAddr(e);
-    if (wildValid) { validateWild(); }
-    if (wildValid) { updateMaskFromWild(); updateCIDR(); updateBinVals(); }
-    showHideErrors();
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => handleWildKeyUp(e), 500);
   });
 
   $cidrAdd.mouseup(function(e) {
@@ -94,9 +96,41 @@ $(function() {
     updateHostBitsVal(-1);
   });
 
+  $pagePrev.mouseup(function(e) {
+    currPage -= 1;
+    if (currPage < 0) { currPage = 0; }
+    updateSubnets();
+  });
+
+  $pageNext.mouseup(function(e) {
+    currPage += 1;
+    if (currPage > totalPages - 1) { currPage = totalPages - 1; }
+    updateSubnets();
+  });
+
   updateBinVals();
   updateSubnets();
 });
+
+function handleAddrKeyUp(e) {
+  cleanAddr(e);
+  if (addrValid) { updateBinVals(); updateSubnets(); }
+  showHideErrors();
+}
+
+function handleMaskKeyUp(e) {
+  cleanAddr(e);
+  if (maskValid) { validateMask(); }
+  if (maskValid) { updateCIDR(); updateWildFromMask(); updateBinVals(); updateSubnets(); }
+  showHideErrors();
+}
+
+function handleWildKeyUp(e) {
+  cleanAddr(e);
+  if (wildValid) { validateWild(); }
+  if (wildValid) { updateMaskFromWild(); updateCIDR(); updateBinVals(); updateSubnets(); }
+  showHideErrors();
+}
 
 function updateCidrVal(val) {
   let cidrVal = parseInt($cidr.val(), 10);
@@ -128,6 +162,8 @@ function updateSubnetBitsVal(val) {
   $subnetBits.val(subnetBitsVal);
   $hostBits.val(max - subnetBitsVal);
 
+  currPage = 0;
+
   updateSubnets();
 }
 
@@ -145,13 +181,35 @@ function updateHostBitsVal(val) {
   $hostBits.val(hostBitsVal);
   $subnetBits.val(max - hostBitsVal);
 
+  currPage = 0;
+
   updateSubnets();
 }
 
 function updateSubnets() {
+  let html = '';
+
   const subnetBitsVal = parseInt($subnetBits.val(), 10);
+  if (subnetBitsVal < 2) {
+    html += '<tr>';
+    html += '<td colspan="5" class="text-center">Not enough subnet bits</td>';
+    html += '</tr>';
+
+    $subnets.html(html);
+    return;
+  }
+
   const hostBitsVal = parseInt($hostBits.val(), 10);
-  const totalSubnets = Math.pow(2, subnetBitsVal);
+  if (hostBitsVal < 2) {
+    html += '<tr>';
+    html += '<td colspan="5" class="text-center">Not enough host bits</td>';
+    html += '</tr>';
+
+    $subnets.html(html);
+    return;
+  }
+
+  let totalSubnets = Math.pow(2, subnetBitsVal);
 
   $totalSubnets.html(totalSubnets.toLocaleString());
   $totalHosts.html(((Math.pow(2, hostBitsVal)) - 2).toLocaleString());
@@ -160,8 +218,15 @@ function updateSubnets() {
   const cidrVal = parseInt($cidr.val(), 10);
   const cidrBits = addrBits.substr(0, cidrVal);
 
-  let html = '';
-  for (let i = 0; i < totalSubnets; i++) {
+  let perPage = totalSubnets > SUBNETS_PER_PAGE ? SUBNETS_PER_PAGE : totalSubnets;
+
+  totalPages = totalSubnets / SUBNETS_PER_PAGE;
+  if (totalPages < 1) { totalPages = 1; }
+
+  const first = currPage * perPage;
+  const last = first + perPage;
+
+  for (let i = first; i < last; i++) {
 
     let networkBits = cidrBits;
     networkBits += int8ToBin(i, false).padStart(cidrVal + subnetBitsVal - networkBits.length, '0');
@@ -283,8 +348,6 @@ function cleanAddr(e) {
   } else {
     eval(e.target.id + 'Valid = false;');
   }
-
-  $(e.target).val(octs.join('.'));
 }
 
 function validateMask() {
