@@ -121,12 +121,10 @@ function updateCidrVal(val) {
 
   if(cidrVal > 32) { cidrVal = 32; }
   if(cidrVal < 0) { cidrVal = 0; }
-
   $cidr.val(cidrVal);
 
   updateMaskFromCidr();
   updateBinVals();
-
   updateSubnetBitsVal(0);
 }
 
@@ -301,7 +299,7 @@ function cleanAddr(e) {
   const octs = newAddr.split('.');
 
   eval(e.target.id + 'Valid = true;');
-  if (4 === 4) {
+  if (octs.length === 4) {
     for (let i = 0; i < 4; i++) {
       let octInt = parseInt(octs[i], 10);
       if (octInt < 0) { octInt = 0; }
