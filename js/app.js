@@ -172,7 +172,7 @@ function updateSubnets() {
   let html = '';
 
   const subnetBitsVal = parseInt($subnetBits.val(), 10);
-  if (subnetBitsVal < 2) {
+  if (subnetBitsVal < 1) {
     html += '<tr>';
     html += '<td colspan="7" class="text-center">Not enough subnet bits</td>';
     html += '</tr>';
